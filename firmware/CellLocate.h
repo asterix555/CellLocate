@@ -5,7 +5,6 @@
 
 class CellLocate
 {
-  CellLocate& _self;
   private:
   public:
 
