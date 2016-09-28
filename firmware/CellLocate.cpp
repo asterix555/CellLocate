@@ -22,7 +22,7 @@ bool CellLocate::is_matched() {
   return CellLocate::ok;
 }
 /* Cell Locate Callback */
-int CellLocate::_cbLOCATE(int type, const char* buf, int len)
+int CellLocate::_cbLOCATE(int type, const char* buf, int len, CellLocate* data)
 {
   if (type == TYPE_PLUS) {
     // DEBUG CODE TO SEE EACH LINE PARSED
@@ -39,23 +39,23 @@ int CellLocate::_cbLOCATE(int type, const char* buf, int len)
     //
     // TODO: %f was not working for float on LAT/LONG, so opted for capturing strings for now
     if ( (count = sscanf(buf, "\r\n+UULOC: %d/%d/%d,%d:%d:%d.%*d,%[^,],%[^,],%d,%d,%d,%d,%d,%d,%d,%d,%d\r\n",
-    CellLocate::day,
-    CellLocate::month,
-    CellLocate::year,
-    CellLocate::hour,
-    CellLocate::minute,
-    CellLocate::second,
-    CellLocate::lat,
-    CellLocate::lng,
-    CellLocate::altitude,
-    CellLocate::uncertainty,
-    CellLocate::speed,
-    CellLocate::direction,
-    CellLocate::vertical_acc,
-    CellLocate::sensor_used,
-    CellLocate::sv_used,
-    CellLocate::antenna_status,
-    CellLocate::jamming_status) ) > 0 ) {
+    &CellLocate::day,
+    &CellLocate::month,
+    &CellLocate::year,
+    &CellLocate::hour,
+    &CellLocate::minute,
+    &CellLocate::second,
+    &CellLocate::lat,
+    &CellLocate::lng,
+    &CellLocate::altitude,
+    &CellLocate::uncertainty,
+    &CellLocate::speed,
+    &CellLocate::direction,
+    &CellLocate::vertical_acc,
+    &CellLocate::sensor_used,
+    &CellLocate::sv_used,
+    &CellLocate::antenna_status,
+    &CellLocate::jamming_status) ) > 0 ) {
       // UULOC Matched
       CellLocate::count = count;
       CellLocate::ok = true;
@@ -106,25 +106,25 @@ bool CellLocate::get_response() {
 void CellLocate::display() {
   /* The whole kit-n-kaboodle */
   Serial.printlnf("\r\n%d/%d/%d,%d:%d:%d,LAT:%s,LONG:%s,%d,UNCERTAINTY:%d,SPEED:%d,%d,%d,%d,%d,%d,%d,MATCHED_COUNT:%d",
-  CellLocate::month,
-  CellLocate::day,
-  CellLocate::year,
-  CellLocate::hour,
-  CellLocate::minute,
-  CellLocate::second,
-  CellLocate::lat,
-  CellLocate::lng,
-  CellLocate::altitude,
-  CellLocate::uncertainty,
-  CellLocate::speed,
-  CellLocate::direction,
-  CellLocate::vertical_acc,
-  CellLocate::sensor_used,
-  CellLocate::sv_used,
-  CellLocate::antenna_status,
-  CellLocate::jamming_status,
-  CellLocate::count);
+  &CellLocate::month,
+  &CellLocate::day,
+  &CellLocate::year,
+  &CellLocate::hour,
+  &CellLocate::minute,
+  &CellLocate::second,
+  &CellLocate::lat,
+  &CellLocate::lng,
+  &CellLocate::altitude,
+  &CellLocate::uncertainty,
+  &CellLocate::speed,
+  &CellLocate::direction,
+  &CellLocate::vertical_acc,
+  &CellLocate::sensor_used,
+  &CellLocate::sv_used,
+  &CellLocate::antenna_status,
+  &CellLocate::jamming_status,
+  &CellLocate::count);
 
   /* A nice map URL */
-  Serial.printlnf("\r\nhttps://www.google.com/maps?q=%s,%s\r\n",CellLocate::lat,CellLocate::lng);
+  Serial.printlnf("\r\nhttps://www.google.com/maps?q=%s,%s\r\n",&CellLocate::lat,&CellLocate::lng);
 }

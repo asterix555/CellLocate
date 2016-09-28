@@ -1,6 +1,10 @@
+
+
+#ifndef CELLLOCATE_H
+#define CELLLOCATE_H
+
 #include "application.h"
 #include "cellular_hal.h"
-
 // struct MDM_CELL_LOCATE {
 
 class CellLocate
@@ -46,7 +50,7 @@ class CellLocate
 
   bool is_matched();
   /* Cell Locate Callback */
-  int _cbLOCATE(int type, const char* buf, int len);
+  int _cbLOCATE(int type, const char* buf, int len, CellLocate* data);
 
   int cell_locate(uint32_t timeout_ms);
 
@@ -56,3 +60,4 @@ class CellLocate
 
   void display();
 };
+#endif
