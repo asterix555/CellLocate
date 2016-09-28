@@ -57,8 +57,8 @@ int CellLocate::_cbLOCATE(int type, const char* buf, int len, CellLocate* data)
     &data->antenna_status,
     &data->jamming_status) ) > 0 ) {
       // UULOC Matched
-      CellLocate::count = count;
-      CellLocate::ok = true;
+      data->count = count;
+      data->ok = true;
     }
   }
   return WAIT;
@@ -68,7 +68,7 @@ int CellLocate::cell_locate(uint32_t timeout_ms) {
   CellLocate::count = 0;
   CellLocate::ok = false;
   if (RESP_OK == Cellular.command(5000, "AT+ULOCCELL=0\r\n")) {
-      if (RESP_OK == Cellular.command(CellLocate::_cbLOCATE, *this, timeout_ms, "AT+ULOC=2,2,1,%d,5000\r\n", timeout_ms/1000)) {
+      if (RESP_OK == Cellular.command("CellLocate::_cbLOCATE", *this, timeout_ms, "AT+ULOC=2,2,1,%d,5000\r\n", timeout_ms/1000)) {
       timeout_set(timeout_ms);
       if (CellLocate::count > 0) {
         return CellLocate::count;
@@ -96,7 +96,7 @@ bool CellLocate::in_progress() {
 
 bool CellLocate::get_response() {
   // Send empty string to check for URCs that were slow
-  Cellular.command(CellLocate::_cbLOCATE, *this, 1000, "");
+  Cellular.command("CellLocate::_cbLOCATE", *this, 1000, "");
   if (CellLocate::count > 0) {
     return true;
   }

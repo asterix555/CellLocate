@@ -50,7 +50,7 @@ class CellLocate
 
   bool is_matched();
   /* Cell Locate Callback */
-  int _cbLOCATE(int type, const char* buf, int len, CellLocate* data);
+  static int _cbLOCATE(int type, const char* buf, int len, CellLocate* data);
 
   int cell_locate(uint32_t timeout_ms);
 
