@@ -39,23 +39,23 @@ int CellLocate::_cbLOCATE(int type, const char* buf, int len, CellLocate* data)
     //
     // TODO: %f was not working for float on LAT/LONG, so opted for capturing strings for now
     if ( (count = sscanf(buf, "\r\n+UULOC: %d/%d/%d,%d:%d:%d.%*d,%[^,],%[^,],%d,%d,%d,%d,%d,%d,%d,%d,%d\r\n",
-    &CellLocate::day,
-    &CellLocate::month,
-    &CellLocate::year,
-    &CellLocate::hour,
-    &CellLocate::minute,
-    &CellLocate::second,
-    &CellLocate::lat,
-    &CellLocate::lng,
-    &CellLocate::altitude,
-    &CellLocate::uncertainty,
-    &CellLocate::speed,
-    &CellLocate::direction,
-    &CellLocate::vertical_acc,
-    &CellLocate::sensor_used,
-    &CellLocate::sv_used,
-    &CellLocate::antenna_status,
-    &CellLocate::jamming_status) ) > 0 ) {
+    &data->day,
+    &data->month,
+    &data->year,
+    &data->hour,
+    &data->minute,
+    &data->second,
+    &data->lat,
+    &data->lng,
+    &data->altitude,
+    &data->uncertainty,
+    &data->speed,
+    &data->direction,
+    &data->vertical_acc,
+    &data->sensor_used,
+    &data->sv_used,
+    &data->antenna_status,
+    &data->jamming_status) ) > 0 ) {
       // UULOC Matched
       CellLocate::count = count;
       CellLocate::ok = true;
