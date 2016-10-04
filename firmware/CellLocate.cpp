@@ -1,3 +1,7 @@
+#ifndef CELLLOCATE
+#define CELLLOCATE
+#if PLATFORM_ID == 10
+
 #include "application.h"
 #include "CellLocate.h"
 #include "cellular_hal.h"
@@ -5,6 +9,16 @@
 // Requires local compile
 // ALL_LEVEL, TRACE_LEVEL, DEBUG_LEVEL, INFO_LEVEL, WARN_LEVEL, ERROR_LEVEL, PANIC_LEVEL, NO_LOG_LEVEL
 //SerialDebugOutput debugOutput(9600, ALL_LEVEL);
+
+
+CellLocate::CellLocate()
+{
+  CellLocate::lat[0] = 0;
+  CellLocate::lng[0] = 0;
+  uint32_t timeout_ms = 10000;
+  CellLocate::locate(timeout_ms);
+}
+
 void CellLocate::timeout_set(uint32_t timeout_ms) {
   cellTimeout = timeout_ms;
   cellTimeStart = millis();
@@ -22,6 +36,7 @@ bool CellLocate::is_matched() {
   return CellLocate::ok;
 }
 /* Cell Locate Callback */
+
 int CellLocate::_cbLOCATE(int type, const char* buf, int len, CellLocate* data)
 {
   if (type == TYPE_PLUS) {
@@ -64,11 +79,12 @@ int CellLocate::_cbLOCATE(int type, const char* buf, int len, CellLocate* data)
   return WAIT;
 }
 
-int CellLocate::cell_locate(uint32_t timeout_ms) {
+int CellLocate::locate(uint32_t timeout_ms) {
   CellLocate::count = 0;
   CellLocate::ok = false;
   if (RESP_OK == Cellular.command(5000, "AT+ULOCCELL=0\r\n")) {
-      if (RESP_OK == Cellular.command("CellLocate::_cbLOCATE", *this, timeout_ms, "AT+ULOC=2,2,1,%d,5000\r\n", timeout_ms/1000)) {
+      CellLocate *data = this;
+      if (RESP_OK == Cellular.command(CellLocate::_cbLOCATE, data, timeout_ms, "AT+ULOC=2,2,1,%d,5000\r\n", timeout_ms/1000)) {
       timeout_set(timeout_ms);
       if (CellLocate::count > 0) {
         return CellLocate::count;
@@ -94,9 +110,15 @@ bool CellLocate::in_progress() {
   }
 }
 
+// completed = opposite of in_progress
+bool CellLocate::completed() {
+  return !CellLocate::in_progress();
+}
+
 bool CellLocate::get_response() {
   // Send empty string to check for URCs that were slow
-  Cellular.command("CellLocate::_cbLOCATE", *this, 1000, "");
+  CellLocate *data = this;
+  Cellular.command(CellLocate::_cbLOCATE, data, 1000, "");
   if (CellLocate::count > 0) {
     return true;
   }
@@ -105,9 +127,9 @@ bool CellLocate::get_response() {
 
 void CellLocate::display() {
   /* The whole kit-n-kaboodle */
-  Serial.printlnf("\r\n%d/%d/%d,%d:%d:%d,LAT:%s,LONG:%s,%d,UNCERTAINTY:%d,SPEED:%d,%d,%d,%d,%d,%d,%d,MATCHED_COUNT:%d",
-  &CellLocate::month,
+  Serial.printlnf("%d/%d/%d,%d:%d:%d,LAT:%s,LONG:%s,%d,UNCERTAINTY:%d,SPEED:%d,%d,%d,%d,%d,%d,%d,MATCHED_COUNT:%d",
   &CellLocate::day,
+  &CellLocate::month,
   &CellLocate::year,
   &CellLocate::hour,
   &CellLocate::minute,
@@ -124,7 +146,11 @@ void CellLocate::display() {
   &CellLocate::antenna_status,
   &CellLocate::jamming_status,
   &CellLocate::count);
-
-  /* A nice map URL */
-  Serial.printlnf("\r\nhttps://www.google.com/maps?q=%s,%s\r\n",&CellLocate::lat,&CellLocate::lng);
 }
+
+void CellLocate::googleMaps() {
+  /* A nice map URL */
+  Serial.printlnf("https://www.google.com/maps?q=%s,%s",CellLocate::lat,CellLocate::lng);
+}
+#endif
+#endif

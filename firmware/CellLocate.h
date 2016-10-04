@@ -1,7 +1,6 @@
-
-
 #ifndef CELLLOCATE_H
 #define CELLLOCATE_H
+#if PLATFORM_ID == 10
 
 #include "application.h"
 #include "cellular_hal.h"
@@ -12,14 +11,16 @@ class CellLocate
   private:
   public:
 
+  CellLocate();
+
   int day = 0;
   int month = 0;
   int year = 0;
   int hour = 0;
   int minute = 0;
   int second = 0;
-  char lat[14] = "";
-  char lng[14] = "";
+  char lat[14];
+  char lng[14];
   int altitude = 0; // only for GNSS positioning
   int uncertainty = 0;
   int speed = 0; // only for GNSS positioning
@@ -52,12 +53,15 @@ class CellLocate
   /* Cell Locate Callback */
   static int _cbLOCATE(int type, const char* buf, int len, CellLocate* data);
 
-  int cell_locate(uint32_t timeout_ms);
+  int locate(uint32_t timeout_ms);
 
   bool in_progress();
+  bool completed();
 
   bool get_response();
 
   void display();
+  void googleMaps();
 };
+#endif
 #endif
