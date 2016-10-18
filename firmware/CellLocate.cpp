@@ -15,7 +15,7 @@ CellLocate::CellLocate()
 {
   CellLocate::lat[0] = 0;
   CellLocate::lng[0] = 0;
-  uint32_t timeout_ms = 10000;
+  uint32_t timeout_ms = 15000;
   CellLocate::locate(timeout_ms);
 }
 
@@ -146,6 +146,12 @@ void CellLocate::display() {
   &CellLocate::antenna_status,
   &CellLocate::jamming_status,
   &CellLocate::count);
+}
+
+
+void CellLocate::openStreepMaps() {
+  /* A nice map URL */
+  Serial.printlnf("https://maps.smart-mt.at/?q=%s,%s&uncertainty=%d",CellLocate::lat,CellLocate::lng, CellLocate::uncertainty);
 }
 
 void CellLocate::googleMaps() {

@@ -4,7 +4,6 @@
 
 #include "application.h"
 #include "cellular_hal.h"
-// struct MDM_CELL_LOCATE {
 
 class CellLocate
 {
@@ -62,6 +61,7 @@ class CellLocate
 
   void display();
   void googleMaps();
+  void openStreepMaps();
 };
 #endif
 #endif
